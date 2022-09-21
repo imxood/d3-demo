@@ -1,8 +1,6 @@
 <script lang="ts">
     import * as d3 from "d3";
-    import { schemeGnBu } from "d3";
-    import { onMount, SvelteComponent } from "svelte";
-    import * as weather_data from "./data/seattle_wa_weather_data.json";
+    import { onMount } from "svelte";
     let div_ele: HTMLElement;
 
     let data = [];
@@ -12,12 +10,6 @@
 
     let margin = { top: 60, bottom: 60, left: 60, right: 60 };
 
-    let width: number;
-    let height: number;
-
-    let xScale = d3.scaleLinear().domain([0, 10]);
-    let yScale = d3.scaleLinear().domain([0, 10]);
-
     onMount(() => {
         console.log("onMount");
         redraw();
@@ -25,48 +17,54 @@
     });
 
     function redraw() {
-        d3.select(div_ele).html(null);
-        let node = d3.select(div_ele).node();
-        // .getBoundingClientRect();
-        width = node.clientWidth - margin.left - margin.right;
-        height = node.clientHeight - margin.top - margin.bottom;
+        var wrapper = d3.select(div_ele);
 
-        xScale.range([0, width]);
-        yScale.range([0, height]);
-
+        wrapper.html(null);
         // console.log(rect);
 
-        const svg = d3
-            .select(div_ele)
+        let rect = div_ele.getBoundingClientRect();
+        let width = rect.width - margin.left - margin.right;
+        let height = rect.height - margin.top - margin.bottom;
+
+        console.log(rect.width, rect.height);
+
+        const bounds = wrapper
             .append("svg")
-            .attr("width", node.clientWidth)
-            .attr("height", node.clientHeight);
-        // .append("g")
-        // .attr("transform", `translate(${[margin.left, margin.top]})`);
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .append("g")
+            .attr("transform", `translate(${[margin.left, margin.top]})`);
 
-        // // 画 x轴
-        // svg.append("g")
-        //     .attr("transform", `translate(${[0, height]})`)
-        //     .call(d3.axisBottom(xScale));
+        console.log(bounds.node());
 
-        // // 画 y轴
-        // svg.append("g").call(d3.axisLeft(yScale));
+        let xScale = d3.scaleLinear().domain([0, 10]).range([0, width]);
+        let yScale = d3.scaleLinear().domain([0, 10]).range([0, height]);
 
-        // svg.append("g")
-        //     .selectAll("circle")
-        //     .data(data)
-        //     .enter()
-        //     .append("circle")
-        //     .attr("cx", (d) => {
-        //         return xScale(d.x);
-        //     })
-        //     .attr("cy", (d) => {
-        //         return yScale(d.y);
-        //     })
-        //     .attr("r", 7)
-        //     .style("fill", "#ff3e00")
-        //     .style("fill-opacity", "0.5")
-        //     .attr("stroke", "#ff3e00");
+        // 画 x轴
+        bounds
+            .append("g")
+            .attr("transform", `translate(${[0, height]})`)
+            .call(d3.axisBottom(xScale));
+
+        // 画 y轴
+        bounds.append("g").call(d3.axisLeft(yScale));
+
+        bounds
+            .append("g")
+            .selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", (d) => {
+                return xScale(d.x);
+            })
+            .attr("cy", (d) => {
+                return yScale(d.y);
+            })
+            .attr("r", 7)
+            .style("fill", "#ff3e00")
+            .style("fill-opacity", "0.5")
+            .attr("stroke", "#ff3e00");
     }
 </script>
 
