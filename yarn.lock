@@ -486,7 +486,7 @@
     "@unocss/core" "0.45.22"
     unconfig "^0.3.6"
 
-"@unocss/core@0.45.22", "@unocss/core@^0.45.22":
+"@unocss/core@0.45.22":
   version "0.45.22"
   resolved "https://registry.npmmirror.com/@unocss/core/-/core-0.45.22.tgz#95dcbb178a3263ff04c3a71438cbae478c9fec56"
   integrity sha512-x6t6XlVpt7VXGC31Tr/KRS8WkURcTO6n0lK2k5zS+cIvc9xpLtwQw8C0c+/NULxbDNo205qfIuB703mmPABLjw==

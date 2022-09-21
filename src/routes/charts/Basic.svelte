@@ -26,45 +26,48 @@
 
     function redraw() {
         d3.select(div_ele).html(null);
-        let rect = d3.select(div_ele).node().getBoundingClientRect();
-        width = rect.width - margin.left - margin.right;
-        height = rect.height - margin.top - margin.bottom;
+        let node = d3.select(div_ele).node();
+        // .getBoundingClientRect();
+        width = node.clientWidth - margin.left - margin.right;
+        height = node.clientHeight - margin.top - margin.bottom;
 
         xScale.range([0, width]);
         yScale.range([0, height]);
 
+        // console.log(rect);
+
         const svg = d3
             .select(div_ele)
             .append("svg")
-            .attr("width", rect.width)
-            .attr("height", rect.height)
-            .append("g")
-            .attr("transform", `translate(${[margin.left, margin.top]})`);
+            .attr("width", node.clientWidth)
+            .attr("height", node.clientHeight);
+        // .append("g")
+        // .attr("transform", `translate(${[margin.left, margin.top]})`);
 
-        // 画 x轴
-        svg.append("g")
-            .attr("transform", `translate(${[0, height]})`)
-            .call(d3.axisBottom(xScale));
+        // // 画 x轴
+        // svg.append("g")
+        //     .attr("transform", `translate(${[0, height]})`)
+        //     .call(d3.axisBottom(xScale));
 
-        // 画 y轴
-        svg.append("g").call(d3.axisLeft(yScale));
+        // // 画 y轴
+        // svg.append("g").call(d3.axisLeft(yScale));
 
-        svg.append("g")
-            .selectAll("circle")
-            .data(data)
-            .enter()
-            .append("circle")
-            .attr("cx", (d) => {
-                return xScale(d.x);
-            })
-            .attr("cy", (d) => {
-                return yScale(d.y);
-            })
-            .attr("r", 7)
-            .style("fill", "#ff3e00")
-            .style("fill-opacity", "0.5")
-            .attr("stroke", "#ff3e00");
+        // svg.append("g")
+        //     .selectAll("circle")
+        //     .data(data)
+        //     .enter()
+        //     .append("circle")
+        //     .attr("cx", (d) => {
+        //         return xScale(d.x);
+        //     })
+        //     .attr("cy", (d) => {
+        //         return yScale(d.y);
+        //     })
+        //     .attr("r", 7)
+        //     .style("fill", "#ff3e00")
+        //     .style("fill-opacity", "0.5")
+        //     .attr("stroke", "#ff3e00");
     }
 </script>
 
-<div class="h-100% mt-20px" style="height: 500px;" bind:this={div_ele} />
+<div id="svg" class="flex-1 bg-amber" bind:this={div_ele} />
