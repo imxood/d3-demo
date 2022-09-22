@@ -22,7 +22,7 @@
 				<a href="/about">About</a>
 			</li>
 			<li class:active={$page.url.pathname === "/charts"}>
-				<a href="/charts/[page]">Charts</a>
+				<a href="/charts">Charts</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
