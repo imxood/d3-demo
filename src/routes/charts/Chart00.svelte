@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { afterNavigate, beforeNavigate } from "$app/navigation";
     import * as d3 from "d3";
     import { onMount } from "svelte";
     let div_ele: HTMLElement;
@@ -11,9 +12,17 @@
     let margin = { top: 60, bottom: 60, left: 60, right: 60 };
 
     onMount(() => {
-        console.log("onMount");
+        console.log("onMount Chart00");
         redraw();
         window.addEventListener("resize", redraw);
+    });
+
+    beforeNavigate((nav) => {
+        console.log("before nav Chart00", nav);
+    });
+
+    afterNavigate((nav) => {
+        console.log("after nav Chart00", nav);
     });
 
     function redraw() {
