@@ -1,8 +1,8 @@
 <script lang="ts">
+    import { onMount, onDestroy } from "svelte";
     import { afterNavigate, beforeNavigate } from "$app/navigation";
     import * as d3 from "d3";
-    import { onMount } from "svelte";
-    let div_ele: HTMLElement;
+    let wrap_ele: HTMLElement;
 
     let data = [];
     for (let i = 0; i < 100; ++i) {
@@ -14,28 +14,20 @@
     onMount(() => {
         console.log("onMount Chart00");
         redraw();
-        window.addEventListener("resize", redraw);
     });
 
-    beforeNavigate((nav) => {
-        console.log("before nav Chart00", nav);
-    });
-
-    afterNavigate((nav) => {
-        console.log("after nav Chart00", nav);
+    onDestroy(() => {
+        console.log("onDestroy Chart00");
     });
 
     function redraw() {
-        var wrapper = d3.select(div_ele);
+        var wrapper = d3.select(wrap_ele);
 
         wrapper.html(null);
-        // console.log(rect);
 
-        let rect = div_ele.getBoundingClientRect();
+        let rect = wrap_ele.getBoundingClientRect();
         let width = rect.width - margin.left - margin.right;
         let height = rect.height - margin.top - margin.bottom;
-
-        console.log(rect.width, rect.height);
 
         const bounds = wrapper
             .append("svg")
@@ -43,8 +35,6 @@
             .attr("height", "100%")
             .append("g")
             .attr("transform", `translate(${[margin.left, margin.top]})`);
-
-        console.log(bounds.node());
 
         let xScale = d3.scaleLinear().domain([0, 10]).range([0, width]);
         let yScale = d3.scaleLinear().domain([0, 10]).range([0, height]);
@@ -77,4 +67,6 @@
     }
 </script>
 
-<div id="svg" class="flex-1 bg-amber" bind:this={div_ele} />
+<div id="svg" class="flex-1 bg-#1BBFF2" bind:this={wrap_ele} />
+
+<svelte:window on:resize={redraw} />

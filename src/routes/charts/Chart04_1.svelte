@@ -5,7 +5,7 @@
 
     let div_ele: HTMLElement;
 
-    const dataset = item;
+    let dataset: any[] = item.slice(0, 100);
 
     const dateParser = d3.timeParse("%Y-%m-%d");
 
@@ -21,13 +21,29 @@
         },
     };
 
-    onDestroy(() => {
-        console.log("onDestroy Chart01");
-    });
+    let timeout;
 
     onMount(() => {
+        console.log("onMount Chart04_1");
+        redraw();
+        timeout = setInterval(() => {
+            dataset = generateNewDataPoint();
+            redraw();
+        }, 200);
+    });
+
+    onDestroy(() => {
+        clearInterval(timeout);
+        console.log("onDestroy Chart04_1");
+    });
+
+    function redraw() {
+        console.log("redraw Chart04_1");
+
         let wrapper = d3.select(div_ele);
         console.log("onMount Chart01");
+
+        wrapper.html(null);
 
         const svg = wrapper
             .append("svg")
@@ -60,12 +76,14 @@
             .range([0, width])
             .nice();
 
+        const updateTransition = d3.transition().duration(600);
+
         const lineGenerator = d3
             .line<any>()
             .x((d) => xScale(xAccessor(d)))
             .y((d) => yScale(yAccessor(d)));
 
-        bound
+        const lines = bound
             .append("path")
             .attr("d", lineGenerator(dataset))
             .attr("fill", "none")
@@ -78,7 +96,28 @@
             .append("g")
             .call(d3.axisBottom(xScale))
             .style("transform", `translateY(${height}px)`);
-    });
+
+        // console.log("dataset", dataset);
+        // lines.transition().duration(3000).attr("d", lineGenerator(dataset));
+    }
+
+    function generateNewDataPoint() {
+        const lastDataPoint = dataset[dataset.length - 1];
+        const nextDay = d3.timeDay.offset(xAccessor(lastDataPoint), 1);
+
+        let data = [
+            ...dataset.slice(1),
+            {
+                date: d3.timeFormat("%Y-%m-%d")(nextDay),
+                temperatureMax:
+                    yAccessor(lastDataPoint) + (Math.random() * 6 - 3),
+            },
+        ];
+
+        return data;
+    }
 </script>
 
-<div class="flex-1 bg-#D8C076" bind:this={div_ele} />
+<div class="flex-1 bg-#E5E8F4" bind:this={div_ele} />
+
+<svelte:window on:resize={redraw} />

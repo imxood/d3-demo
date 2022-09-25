@@ -6,31 +6,10 @@
 
 <Header />
 
-<main class="flex-1 flex flex-col">
+<main class="flex-1 flex flex-col overflow-hidden">
 	<slot />
 </main>
 
-<footer>
-	<p>
-		visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit
-	</p>
+<footer class="flex flex-col justify-center items-center font-bold">
+	<div>马许 制作</div>
 </footer>
-
-<style>
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	footer a {
-		font-weight: bold;
-	}
-
-	@media (min-width: 480px) {
-		footer {
-			padding: 40px 0;
-		}
-	}
-</style>
