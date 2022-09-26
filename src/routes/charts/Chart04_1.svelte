@@ -26,10 +26,6 @@
     onMount(() => {
         console.log("onMount Chart04_1");
         redraw();
-        timeout = setInterval(() => {
-            dataset = generateNewDataPoint();
-            redraw();
-        }, 200);
     });
 
     onDestroy(() => {
@@ -38,6 +34,9 @@
     });
 
     function redraw() {
+        if (timeout) {
+            clearInterval(timeout);
+        }
         console.log("redraw Chart04_1");
 
         let wrapper = d3.select(div_ele);
@@ -64,38 +63,54 @@
         let height =
             rect.height - dimensions.margin.top - dimensions.margin.bottom;
 
-        const yScale = d3
-            .scaleLinear()
-            .domain(d3.extent(dataset, yAccessor))
-            .range([height, 0])
-            .nice();
-
-        const xScale = d3
-            .scaleTime()
-            .domain(d3.extent(dataset, xAccessor))
-            .range([0, width])
-            .nice();
-
-        const updateTransition = d3.transition().duration(600);
-
-        const lineGenerator = d3
-            .line<any>()
-            .x((d) => xScale(xAccessor(d)))
-            .y((d) => yScale(yAccessor(d)));
-
-        const lines = bound
-            .append("path")
-            .attr("d", lineGenerator(dataset))
-            .attr("fill", "none")
-            .attr("stroke", "red")
-            .attr("stroke-width", 2);
-
-        bound
+        const xAxis = bound
             .append("g")
-            .call(d3.axisLeft(yScale))
-            .append("g")
-            .call(d3.axisBottom(xScale))
+            .attr("class", "x-axis")
             .style("transform", `translateY(${height}px)`);
+        const yAxis = bound.append("g").attr("class", "y-axis");
+
+        const lines = bound.append("path");
+
+        function drawLines() {
+            const xScale = d3
+                .scaleTime()
+                .domain(d3.extent(dataset, xAccessor))
+                .range([0, width])
+                .nice();
+
+            const yScale = d3
+                .scaleLinear()
+                .domain(d3.extent(dataset, yAccessor))
+                .range([height, 0])
+                .nice();
+
+            const updateTransition = d3.transition().duration(600);
+
+            const linesGenerator = d3
+                .line<any>()
+                .x((d) => xScale(xAccessor(d)))
+                .y((d) => yScale(yAccessor(d)));
+
+            lines
+                .attr("d", linesGenerator(dataset))
+                .attr("fill", "none")
+                .attr("stroke", "red")
+                .attr("stroke-width", 2);
+
+            xAxis.call(d3.axisBottom(xScale));
+            yAxis.call(d3.axisLeft(yScale));
+        }
+
+        timeout = setInterval(() => {
+            dataset = generateNewDataPoint();
+            drawLines();
+        }, 200);
+
+        // bound
+        //     .append("g")
+        //     .call(d3.axisLeft(yScale))
+        //     .append("g")
+        //     .call(d3.axisBottom(xScale));
 
         // console.log("dataset", dataset);
         // lines.transition().duration(3000).attr("d", lineGenerator(dataset));
